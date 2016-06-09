@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Server"
+        android:key="ServerGroup">
+        <EditTextPreference
+            android:summary="Enter server name"
+            android:defaultValue="166.62.2.1"
+            android:title="Server"
+            android:key="Server" />
+        <EditTextPreference
+            android:summary="Enter your username"
+            android:defaultValue="ezyd9850"
+            android:title="Username"
+            android:key="Username" />
+        <EditTextPreference
+            android:summary="Enter your password"
+            android:defaultValue="Ax3!YC9b"
+            android:title="Password"
+            android:key="Password"
+            android:inputType="textPassword"
+            android:password="true"/>
+        <EditTextPreference
+            android:summary="Enter the server directory"
+            android:defaultValue="/sites/default/files/private/users"
+            android:title="Remote Directory"
+            android:key="RemoteDirectory" />
+        <PreferenceScreen
+            android:title="Download Locations"
+            android:summary="Download Locations">
+            <intent android:action="au.com.mazeit.seedaudit.GoogleDriveREST"/>
+        </PreferenceScreen>
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="10dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="au.com.mazeit.seedaudit.MainActivity"
+    tools:showIn="@layout/activity_main">
+
+    <TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtSeedlotScanned"
+            android:enabled="false"
+            android:layout_column="0" />
+    </TableRow>
+    <TableRow>
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:text="Gross Weight:"
+            android:layout_column="0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:id="@+id/txtGross" />
+        <EditText
+            android:id="@+id/editTextGross"
+            android:gravity="right"
+            android:inputType="numberDecimal"
+            android:layout_width="90.0dp"
+            android:padding="10dp"
+            android:layout_marginRight="63.0dp" />
+    </TableRow>
+    <TableRow>
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:text="Barrel Weight:"
+            android:layout_column="0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:id="@+id/txtBarrel" />
+        <EditText
+            android:id="@+id/editTextBarrel"
+            android:gravity="right"
+            android:inputType="numberDecimal"
+            android:layout_width="90.0dp"
+            android:padding="10dp"
+            android:layout_marginRight="63.0dp" />
+    </TableRow>
+    <TableRow>
+    </TableRow>
+    <TableRow>
+    </TableRow>
+    <TableRow>
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:text="Net Calculation:"
+            android:layout_column="0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:id="@+id/textView1" />
+        <TextView
+            android:id="@+id/txtNetCalc"
+            android:enabled="false"
+            android:gravity="right"
+            android:inputType="numberDecimal"
+            android:layout_width="90.0dp"
+            android:padding="10dp"
+            android:layout_marginRight="63.0dp" />
+    </TableRow>
+    <TableRow>
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:text="Seed Verified:"
+            android:layout_column="0"
+            android:padding="10dp"
+            android:id="@+id/textView11" />
+        <CheckBox
+            android:layout_column="1"
+            android:padding="10dp"
+            android:id="@+id/cbVerified" />
+    </TableRow>
+    <TableRow
+        android:layout_height="90.0dp">
+    </TableRow>
+    <TableRow>
+    </TableRow>
+    <!--<Button-->
+    <!--android:text="Save"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_column="1"-->
+    <!--android:id="@+id/btnSave"-->
+    <!--android:onClick="btnSave_Clicked"/>-->
+</TableLayout>
