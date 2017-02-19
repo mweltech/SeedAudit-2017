@@ -5,8 +5,9 @@ android {
     buildToolsVersion "23.0.3"
     defaultConfig {
         applicationId "au.com.mazeit.seedaudit"
-        minSdkVersion 22
-        targetSdkVersion 23
+        minSdkVersion 21
+        targetSdkVersion 21
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
     }
@@ -30,10 +31,10 @@ dependencies {
     compile files('libs/opencsv-2.3.jar')
     compile 'com.google.android.gms:play-services:9.0.0'
     compile 'pub.devrel:easypermissions:0.1.5'
-    compile ('com.google.api-client:google-api-client-android:1.22.0') {
+    compile('com.google.api-client:google-api-client-android:1.22.0') {
         exclude group: 'org.apache.httpcomponents'
     }
-    compile ('com.google.apis:google-api-services-drive:v3-rev28-1.22.0') {
+    compile('com.google.apis:google-api-services-drive:v3-rev28-1.22.0') {
         exclude group: 'org.apache.httpcomponents'
     }
 }

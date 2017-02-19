@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
 
 /**
  * Created by mr on 14/03/16.
@@ -411,6 +413,21 @@ public class PostsDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    // Delete all data in the supplied table
+    public void deleteAllDataInTable(String tableName) {
+        // Note Order of deletions is important when foreign key relationships exist.
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            db.delete(tableName, null, null);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.d("PostDatabaseHelper", "Error while trying to delete all data in table" + tableName);
+        } finally {
+            db.endTransaction();
+        }
+    }
+
 
     // Get all posts in the database
     public Seedlot getSeedlot(String identifier) {
@@ -435,6 +452,7 @@ public class PostsDatabaseHelper extends SQLiteOpenHelper {
                     sRetrieved.slnId = cursor.getInt(cursor.getColumnIndex(KEY_SEEDLOT_SLN_ID));
                     sRetrieved.name = cursor.getString(cursor.getColumnIndex(KEY_SEEDLOT_NAME));
                     sRetrieved.number = cursor.getString(cursor.getColumnIndex(KEY_SEEDLOT_NUMBER));
+                    sRetrieved.office = cursor.getInt(cursor.getColumnIndex(KEY_SEEDLOT_OFFICE));
                 } while(cursor.moveToNext());
             }
         } catch (Exception e) {
@@ -467,7 +485,52 @@ public class PostsDatabaseHelper extends SQLiteOpenHelper {
     //private static final String KEY_SA_CHANGEDBY = "changedBy";
     //private static final String KEY_SA_CHANGEDDATE = "changedDate";
 
-
+    public int exportSeedAuditsCSV(String dstPath,String dstFile) {
+        String[] columns = {KEY_SA_SLN_ID, KEY_SA_OFFICE, KEY_SA_GROSS, KEY_SA_BARREL, KEY_SA_NETT, KEY_SA_VERIFIED, KEY_SA_CHANGEDBY, KEY_SA_CHANGEDDATE};
+        String SEEDAUDIT_SELECT_QUERY = String.format("SELECT * FROM %s",TABLE_SEEDAUDIT);
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(SEEDAUDIT_SELECT_QUERY, null);
+        File csvFile = new File(dstPath,dstFile);
+        FileWriter fOut = null;
+        CSVWriter csvw = null;
+        String[] row = new String[8];
+        try {
+            fOut = new FileWriter(csvFile);
+            csvw = new CSVWriter(fOut);
+            for (int i = 0; i < columns.length; i++) {
+                row[i] = columns[i];
+            }
+            csvw.writeNext(row);
+            if (cursor.moveToFirst()) {
+                do {
+                    row[0] = Integer.toString(cursor.getInt(cursor.getColumnIndex(KEY_SA_SLN_ID)));
+                    row[1] = Integer.toString(cursor.getInt(cursor.getColumnIndex(KEY_SA_OFFICE)));
+                    //row[2] = Float.toString(cursor.getFloat(cursor.getColumnIndex(KEY_SA_GROSS)));
+                    //row[3] = Float.toString(cursor.getFloat(cursor.getColumnIndex(KEY_SA_BARREL)));
+                    //row[4] = Float.toString(cursor.getFloat(cursor.getColumnIndex(KEY_SA_NETT)));
+                    row[2] = Double.toString(cursor.getDouble(cursor.getColumnIndex(KEY_SA_GROSS)));
+                    row[3] = Double.toString(cursor.getDouble(cursor.getColumnIndex(KEY_SA_BARREL)));
+                    row[4] = Double.toString(cursor.getDouble(cursor.getColumnIndex(KEY_SA_NETT)));
+                    if(cursor.getInt(cursor.getColumnIndex(KEY_SA_VERIFIED))==1) {
+                        row[5] = "true";
+                    } else {
+                        row[5] = "false";
+                    }
+                    row[6] = cursor.getString(cursor.getColumnIndex(KEY_SA_CHANGEDBY));
+                    row[7] = cursor.getString(cursor.getColumnIndex(KEY_SA_CHANGEDDATE));
+                    csvw.writeNext(row);
+                } while(cursor.moveToNext());
+            }
+            csvw.close();
+            fOut.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d("PostDatabaseHelper", "Error while trying to get audits from database");
+        }
+        return 1;
+    }
 
     public int exportSeedAudits(String dstPath,String dstFile) {
 
@@ -493,11 +556,14 @@ public class PostsDatabaseHelper extends SQLiteOpenHelper {
 
                 do {
                     xs.startTag(null, "seed_audit");
-                    addXml(xs, "slnId", Integer.toString(cursor.getInt(cursor.getColumnIndex(KEY_SA_ID))));
-                    addXml(xs, "locationId", Integer.toString(cursor.getInt(cursor.getColumnIndex(KEY_SA_SLN_ID))));
-                    addXml(xs, "gross", Float.toString(cursor.getFloat(cursor.getColumnIndex(KEY_SA_GROSS))));
-                    addXml(xs, "barrelWgt",Float.toString(cursor.getFloat(cursor.getColumnIndex(KEY_SA_BARREL))));
-                    addXml(xs, "nett",Float.toString(cursor.getFloat(cursor.getColumnIndex(KEY_SA_NETT))));
+                    addXml(xs, "slnId", Integer.toString(cursor.getInt(cursor.getColumnIndex(KEY_SA_SLN_ID))));
+                    addXml(xs, "locationId", Integer.toString(cursor.getInt(cursor.getColumnIndex(KEY_SA_OFFICE))));
+                    //addXml(xs, "gross", Float.toString(cursor.getFloat(cursor.getColumnIndex(KEY_SA_GROSS))));
+                    //addXml(xs, "barrelWgt",Float.toString(cursor.getFloat(cursor.getColumnIndex(KEY_SA_BARREL))));
+                    //addXml(xs, "nett",Float.toString(cursor.getFloat(cursor.getColumnIndex(KEY_SA_NETT))));
+                    addXml(xs, "gross", Double.toString(cursor.getDouble(cursor.getColumnIndex(KEY_SA_GROSS))));
+                    addXml(xs, "barrelWgt",Double.toString(cursor.getDouble(cursor.getColumnIndex(KEY_SA_BARREL))));
+                    addXml(xs, "nett",Double.toString(cursor.getDouble(cursor.getColumnIndex(KEY_SA_NETT))));
                     if(cursor.getInt(cursor.getColumnIndex(KEY_SA_VERIFIED))==1) {
                         addXml(xs, "verified","true");
                     } else {
@@ -581,6 +647,7 @@ public class PostsDatabaseHelper extends SQLiteOpenHelper {
             InputStreamReader isreader = new InputStreamReader(in);
             CSVReader reader = new CSVReader(isreader);
             String [] nextLine;
+            deleteAllDataInTable(TABLE_SEEDLOTS);
             while ((nextLine = reader.readNext()) != null) {
                 // nextLine[] is an array of values from the line
                 if(nextLine[0].equals("SlnID")) {
@@ -626,6 +693,7 @@ public class PostsDatabaseHelper extends SQLiteOpenHelper {
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             parser.setInput(in, null);
             parser.nextTag();
+            deleteAllDataInTable(TABLE_SEEDLOTS);
             readSeedLots(parser);
         } finally {
             in.close();

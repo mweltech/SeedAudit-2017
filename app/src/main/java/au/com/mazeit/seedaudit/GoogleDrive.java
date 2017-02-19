@@ -47,7 +47,7 @@ public class GoogleDrive extends AppCompatActivity implements GoogleApiClient.Co
  * upload a text file from device to Drive */
 
     private static final String auditResultsFileName = "seedaudits";
-    private static final String auditResultsFileNameExt = ".xml";
+    private static final String auditResultsFileNameExt = ".csv";
 
     private static final String TAG = "upload_file";
     private static final int REQUEST_CODE = 101;
@@ -74,7 +74,7 @@ public class GoogleDrive extends AppCompatActivity implements GoogleApiClient.Co
 
         //textFile = new File(Environment.getExternalStorageDirectory() + File.separator + "Download" + File.separator + "test.txt");
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-MM-ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
         Date now = new Date();
 
@@ -95,15 +95,26 @@ public class GoogleDrive extends AppCompatActivity implements GoogleApiClient.Co
 
         /*build the api client*/
 
+        Toast.makeText(GoogleDrive.this,
+                "Exporting data...", Toast.LENGTH_SHORT).show();
+
+
         PostsDatabaseHelper exportDB = PostsDatabaseHelper.getInstance(this);
 
-        exportDB.exportSeedAudits(uploadFile.getParent() + File.separator, uploadFile.getName());
+        //exportDB.exportSeedAudits(uploadFile.getParent() + File.separator, uploadFile.getName());
+        exportDB.exportSeedAuditsCSV(uploadFile.getParent() + File.separator, uploadFile.getName());
 
         buildGoogleApiClient();
 
         Log.i(TAG, "In onStart() - connecting...");
         googleApiClient.connect();
 
+        return true;
+    }
+
+    public boolean btnCancel_Clicked(View v){
+        // cancel comms here....
+        finish();
         return true;
     }
 

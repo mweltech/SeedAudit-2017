@@ -21,6 +21,8 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Date;
 import java.sql.Time;
 import java.text.DateFormat;
@@ -30,7 +32,8 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity {
 
     Seedlot currentSeedlot;
-    Float numGross,numBarrel,numNett;
+    //Float numGross,numBarrel,numNett;
+    Double numGross,numBarrel,numNett;
     Boolean verified;
     String changedBy;
     Date changedDate;
@@ -77,16 +80,29 @@ public class MainActivity extends AppCompatActivity {
                 String sBarrelWeight = barrelWeight.getText().toString();
 
                 if (!sGrossWeight.isEmpty() && !sBarrelWeight.isEmpty()) {
-                    numGross = Float.parseFloat(sGrossWeight);
-                    numBarrel = Float.parseFloat(sBarrelWeight);
-                    numNett = numGross - numBarrel;
-                    nettCalc.setText(Float.toString(numNett));
+                    //numGross = Float.parseFloat(sGrossWeight);
+                    numGross = Double.parseDouble(sGrossWeight);
+                    //numBarrel = Float.parseFloat(sBarrelWeight);
+                    numBarrel = Double.parseDouble(sBarrelWeight);
+                    numNett = round(numGross - numBarrel,2);
+                    //nettCalc.setText(Float.toString(numNett));
+
+                    nettCalc.setText(Double.toString(numNett));
                 }
             }
         };
 
+        grossWeight.addTextChangedListener(doNett);
         barrelWeight.addTextChangedListener(doNett);
 
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
     public void btnSave_Clicked(View v){
@@ -102,8 +118,14 @@ public class MainActivity extends AppCompatActivity {
             TextView txtnettCalc = (TextView) findViewById(R.id.txtNetCalc);
 
             CheckBox cbverified = (CheckBox) findViewById(R.id.cbVerified);
-            String sVerified = cbverified.getText().toString();
-            verified = Boolean.parseBoolean(sVerified);
+            if(cbverified.isChecked()) {
+                verified = Boolean.TRUE;
+            }
+            else {
+                verified = Boolean.FALSE;
+            }
+            //String sVerified = cbverified.getText().toString();
+            //verified = Boolean.parseBoolean(sVerified);
 
 
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:sss");
@@ -129,8 +151,9 @@ public class MainActivity extends AppCompatActivity {
             txtgrossWeight.setText("");
             txtbarrelWeight.setText("");
             txtnettCalc.setText("");
-            cbverified.setText("");
-            setSeedlot("");
+            //cbverified.setActivated(false);
+            cbverified.setChecked(false);
+            setSeedlot("","");
             txtgrossWeight.requestFocus();
 
         }
@@ -171,17 +194,25 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 else {
-                    setSeedlot(currentSeedlot.name);
+                    setSeedlot(currentSeedlot.number, currentSeedlot.name);
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+                    EditText txtgrossWeight = (EditText) findViewById(R.id.editTextGross);
+                    txtgrossWeight.requestFocus();
+
                 }
             }
         }
     }
 
-    public void setSeedlot(String name) {
-        TextView txtSeedlotScanned = (TextView) findViewById(R.id.txtSeedlotScanned);
-        txtSeedlotScanned.setText(name);
+    public void setSeedlot(String number,String name) {
+        TextView txtSeedlotScannedNumber = (TextView) findViewById(R.id.txtSeedlotScannedNumber);
+        txtSeedlotScannedNumber.setText(number);
+        if(name.length()>0) {
+            name = " / " + name;
+        }
+        TextView txtSeedlotScannedName = (TextView) findViewById(R.id.txtSeedlotScannedName);
+        txtSeedlotScannedName.setText(name);
     }
 
 

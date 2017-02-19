@@ -68,7 +68,7 @@ public class GoogleDriveREST extends Activity implements EasyPermissions.Permiss
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
 
-    private static final String BUTTON_TEXT = "Call Drive API";
+    private static final String BUTTON_TEXT = "Download Seedlots";
     private static final String PREF_ACCOUNT_NAME = "accountName";
     //private static final String[] SCOPES = { DriveScopes.DRIVE_METADATA_READONLY };
     private static final String[] SCOPES = { DriveScopes.DRIVE };
@@ -114,7 +114,7 @@ public class GoogleDriveREST extends Activity implements EasyPermissions.Permiss
         mOutputText.setVerticalScrollBarEnabled(true);
         mOutputText.setMovementMethod(new ScrollingMovementMethod());
         mOutputText.setText(
-                "Click the \'" + BUTTON_TEXT +"\' button to test the API.");
+                "Click the \'" + BUTTON_TEXT +"\' button to start the download.");
         activityLayout.addView(mOutputText);
 
         mProgress = new ProgressDialog(this);
