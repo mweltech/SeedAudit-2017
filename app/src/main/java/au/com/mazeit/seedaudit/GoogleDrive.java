@@ -56,6 +56,9 @@ public class GoogleDrive extends AppCompatActivity implements GoogleApiClient.Co
     public static String drive_id;
     public static DriveId driveID;
 
+    // Bool to track whether the app is already resolving an error
+    private boolean mResolvingError = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -126,20 +129,22 @@ public class GoogleDrive extends AppCompatActivity implements GoogleApiClient.Co
         //googleApiClient.connect();
     }
 
-    /*close connection to Google Play Services*/ @Override
+    /*close connection to Google Play Services*/
+    @Override
     protected void onStop() {
         super.onStop();
-        if (googleApiClient != null) {
-            Log.i(TAG, "In onStop() - disConnecting...");
-            googleApiClient.disconnect();
-        }
+        //if (googleApiClient != null) {
+        //    Log.i(TAG, "In onStop() - disConnecting...");
+        //    googleApiClient.disconnect();
+        //}
     }
 
     /*Handles onConnectionFailed callbacks*/
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        //super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+            mResolvingError=false;
             Log.i(TAG, "In onActivityResult() - connecting..."); googleApiClient.connect();
         }
     }
@@ -298,13 +303,19 @@ public class GoogleDrive extends AppCompatActivity implements GoogleApiClient.Co
         /*callback when there there's an error connecting the client to the service.*/
         @Override
         public void onConnectionFailed(ConnectionResult result) {
+            if(mResolvingError) {
+                return;
+            }
             Log.i(TAG, "Connection failed");
             if (!result.hasResolution()) {
                 GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(), this, 0).show();
                 return;
             }
             try {
-                Log.i(TAG, "trying to resolve the Connection failed error..."); result.startResolutionForResult(this, REQUEST_CODE);
+                Log.i(TAG, "trying to resolve the Connection failed error...");
+                mResolvingError = true;
+                result.startResolutionForResult(this, REQUEST_CODE);
+                //result.startResolutionForResult(this, REQUEST_RESOLVE_ERROR);
             } catch (IntentSender.SendIntentException e) {
                 Log.e(TAG, "Exception while starting resolution activity", e);
             }
