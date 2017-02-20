@@ -9,7 +9,7 @@ android {
         targetSdkVersion 21
         multiDexEnabled true
         versionCode 1
-        versionName "1.1"
+        versionName "1.2"
     }
     buildTypes {
         release {
